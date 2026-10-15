@@ -186,7 +186,21 @@ npm run build
 
 3.Upload the outcome in dist/ to the VPS;
 
-
+4.Add configuration to Nginx Server:
+```bash
+    location /api {
+      proxy_pass http://127.0.0.1:8080;
+      proxy_set_header Host $proxy_host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_buffering off;
+      proxy_set_header Connection "";
+    }
+    
+    location / {
+      try_files $uri $uri/index.html /index.html;
+    }
+```
 
 ##### Backend:
 
