@@ -1,0 +1,26 @@
+{
+  "title": "Shell 脚本练习（修订）",
+  "content": "# 新要求\n\nplain text or ![](url) here",
+  "type": "shell_script",
+  "difficulty": "medium",
+  "tags": "Linux,Shell,Bash",
+  "subQuestions": [
+    {
+      "id": 2806,
+      "content": "子问题 2（已编辑，现排第一）",
+      "answerFormat": "text",
+      "referenceAnswer": "示例参考答案",
+      "rubric": "表述清晰 10 分",
+      "allowSandbox": false,
+      "score": 20
+    },
+    {
+      "content": "新增子问题：写一个查找文件的脚本",
+      "answerFormat": "code",
+      "referenceAnswer": "find . -name '*.txt'",
+      "rubric": "命令正确 4 分，输出正确 4 分",
+      "allowSandbox": true,
+      "score": 8
+    }
+  ]
+}

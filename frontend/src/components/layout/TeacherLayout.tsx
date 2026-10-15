@@ -1,0 +1,96 @@
+import type { ParseKeys } from "i18next"
+import { useTranslation } from "react-i18next"
+import { NavLink, Outlet, useLocation, useMatches } from "react-router-dom"
+import {
+  AlertCircle,
+  BarChart3,
+  BookOpen,
+  ClipboardList,
+  FileText,
+  LayoutDashboard,
+  Settings,
+  Users,
+} from "lucide-react"
+
+import { Separator } from "@/components/ui/separator"
+import { SidebarUserFooter } from "@/components/layout/SidebarUserFooter"
+import { useDocumentTitle } from "@/hooks/useDocumentTitle"
+import { cn } from "@/lib/utils"
+
+const navItems = [
+  { to: "/teacher", labelKey: "nav:home", icon: LayoutDashboard, end: true },
+  { to: "/teacher/questions", labelKey: "nav:questions", icon: BookOpen, end: false },
+  { to: "/teacher/assignments", labelKey: "nav:assignments", icon: ClipboardList, end: false },
+  { to: "/teacher/submissions", labelKey: "nav:submissions", icon: FileText, end: false },
+  { to: "/teacher/disputes", labelKey: "nav:disputes", icon: AlertCircle, end: false },
+  { to: "/teacher/analytics", labelKey: "nav:grades", icon: BarChart3, end: false },
+  { to: "/teacher/roster", labelKey: "nav:roster", icon: Users, end: false },
+  { to: "/teacher/settings", labelKey: "nav:settings", icon: Settings, end: false },
+] as const
+
+function readTitleKey(matches: ReturnType<typeof useMatches>): ParseKeys | undefined {
+  const found = [...matches]
+    .reverse()
+    .find(
+      (match) =>
+        typeof match.handle === "object" &&
+        match.handle !== null &&
+        "titleKey" in match.handle &&
+        typeof (match.handle as { titleKey?: unknown }).titleKey === "string",
+    )
+  return found ? ((found.handle as { titleKey: string }).titleKey as ParseKeys) : undefined
+}
+
+export function TeacherLayout() {
+  const { t } = useTranslation()
+  const location = useLocation()
+  const matches = useMatches()
+  const titleKey = readTitleKey(matches)
+  const pageTitle = titleKey ? t(titleKey) : undefined
+  const isDashboard = location.pathname === "/teacher"
+
+  useDocumentTitle(pageTitle)
+
+  return (
+    <div className="flex min-h-screen bg-background">
+      <aside className="flex w-64 shrink-0 flex-col border-r bg-card">
+        <div className="px-6 py-5">
+          <span className="text-lg font-semibold tracking-tight">LLM-based Online Judge</span>
+        </div>
+        <Separator />
+        <nav className="flex flex-1 flex-col gap-1 p-3">
+          {navItems.map(({ to, labelKey, icon: Icon, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )
+              }
+            >
+              <Icon className="size-4 shrink-0" />
+              {t(labelKey)}
+            </NavLink>
+          ))}
+        </nav>
+        <SidebarUserFooter />
+      </aside>
+
+      <main className="flex flex-1 flex-col">
+        {!isDashboard && pageTitle && (
+          <header className="border-b px-8 py-4">
+            <h1 className="text-xl font-semibold">{pageTitle}</h1>
+          </header>
+        )}
+        <div className="flex-1 p-8">
+          <Outlet />
+        </div>
+      </main>
+    </div>
+  )
+}
